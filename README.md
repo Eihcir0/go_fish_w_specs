@@ -2,8 +2,7 @@
 
 
 * Descriptions of each method to implement are written into the `lib/`
-  files. For each `lib/` file, there is NOT a corresponding `spec/` file
-  for game.rb or card.rb.
+  files. There is NOT a corresponding `spec` file for game.rb or card.rb.
 * Run the specs as you solve the assessment. Solve the assessment in
   this order:
 
