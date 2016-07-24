@@ -24,9 +24,5 @@ class Player
   def lays_down_book
   end
 
-  #given
-  def has_book
-    @hand.has_book
-  end
 
 end#class

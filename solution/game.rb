@@ -16,9 +16,20 @@ class Game
 
   def initialize(num_players)
     @players = set_up_players(num_players)
+    @num_players = num_players
     @deck = Deck.new
     @current_player = @players.first
+    welcome
     run_game
+  end
+
+  def welcome
+    system 'clear'
+    puts "Welcome to Eihcir0's GO FISH!"
+    puts
+    puts "This was designed to practice making specs so interface, er, sucks!"
+    puts "Also, the game is pretty stupid without any computer players!!! :("
+    puts
   end
 
   def run_game
@@ -28,31 +39,64 @@ class Game
   end
 
   def play_round
-    good_guess=true
-    while good_guess
-      puts "#{@current_player.name}'s turn.  Now holding: "
-      puts @current_player.hand.display
-      puts
-
-      target_player, value = player_guess
-      good_guess = @current_player.asks_for_card(target_player, value)
-      @current_player.gimme_da_cards(target_player, value) if good_guess
-      lay_down_books while @current_player.hand.has_book
+    lucky_fisher = true  #set this true to start the round
+    while lucky_fisher
+      next if @current_player.hand.empty?
+      prompt_player
+      target_player, value_asked = player_guess
+      #good_guess == player correctly guesses a card in opponents hand
+      good_guess = @current_player.asks_for_card(target_player, value_asked)
+      @current_player.gimme_da_cards(target_player, value_asked) if good_guess
+      check_for_books
       return if game_over?
-      puts "GOOD GUESS!" if good_guess
+      lucky_fisher = false if round_over?(good_guess, value_asked)
     end
-    puts "GO FISH!!"
-    puts
-    @current_player.go_fish(@deck) unless @deck.cards.empty?
     switch_current_player
   end
 
+  def check_for_books
+    @current_player.lays_down_book while @current_player.has_book
+  end
+
+  def round_over?(good_guess, value_asked)
+    if good_guess
+      puts "GOOD GUESS!  You've got skill."  #should update #gimme_da_cards to display cards received
+      puts
+      true
+    elsif go_fish_get_lucky?(value_asked)
+      puts "#{@current_player.name} went fishin' and got lucky!"
+      puts
+      false
+    else
+      true
+    end
+  end
+
+  def go_fish_get_lucky?(value_asked)
+    puts "GO FISH!!"
+    puts
+    go_fish_card_value = @current_player.go_fish(@deck) unless @deck.empty?
+    puts "Went fishing and got a #{"%02d" % go_fish_card_value}."
+    puts
+    check_for_books
+    go_fish_card_value == value_asked
+  end
+
+  def prompt_player
+    puts "#{@current_player.name}'s turn.  Now holding: "
+    puts @current_player.hand.display
+    puts
+    puts "Books: #{@current_player.books.size}"
+    puts
+  end
+
   def player_guess
-    good_guess = false
-    until good_guess
-      puts "Ask which player?  0-#{@players.count - 1}?"
-      who = @players[gets.chomp.to_i]
-      good_guess = true if who != @current_player
+    valid_guess = false
+    until valid_guess
+      puts "Ask which player?  0 - #{@players.count - 1}?"
+      guess = gets.chomp.to_i
+      who = @players[guess]
+      valid_guess = true if guess.between?(0, @num_players) && who != @current_player
     end
     puts "For which card value (1-13)?"
     what = gets.chomp.to_i
@@ -70,7 +114,9 @@ class Game
   end
 
   def game_over?
-    @deck.cards.empty? && @players.all?{|player| player.cards = []}
+    its_over = @deck.empty? && @players.all?{|player| player.hand.empty?}
+    puts "GAME OVER!" if its_over #update to show winner
+    its_over
   end
 
   def switch_current_player

@@ -29,4 +29,9 @@ class Deck
     @cards = @cards.shuffle!
   end
 
+  #given
+  def empty?
+    @cards.empty?
+  end
+
 end#class

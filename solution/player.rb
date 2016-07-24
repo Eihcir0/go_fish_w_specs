@@ -27,7 +27,9 @@ class Player
 
   #gets a card from the deck and puts it into the players hand
   def go_fish(deck)
-    @hand.add(deck.get_card)
+    new_card = deck.get_card
+    @hand.add(new_card)
+    new_card.first.value
   end
 
   #moves book into book array and removes from hand
@@ -36,5 +38,9 @@ class Player
     @books += @hand.drop(@hand.has_book)
   end
 
+  #given
+  def has_book
+    @hand.has_book
+  end
 
 end#class

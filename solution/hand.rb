@@ -46,6 +46,10 @@ class Hand
 
   #disregard this for assessment (used in working game)
   def display
-    @cards.map{|card| "#{card.value.to_s}#{card.suit.to_s}"}.join(",")
+    @cards.map{|card| "#{"%02d" % card.value} #{card.suit.to_s}"}.sort.join(", ")
+  end
+
+  def empty?
+    @cards.empty?
   end
 end

@@ -25,8 +25,16 @@ describe Player do
       expect(deck).to receive(:get_card).and_return(new_card)
       player1.go_fish(deck)
       expect(player1.hand.cards).to match_array(new_card)
-
     end
+
+    it 'returns the value of the card drawn' do
+      new_card = [Card.new(:spades, 2)]
+      expect(deck).to receive(:get_card).and_return(new_card)
+
+      expect(player1.go_fish(deck)).to eq(2)
+    end
+
+
   end
 
   describe '#lays_down_book' do

@@ -20,9 +20,4 @@ class Deck
   def shuffle!
   end
 
-  #given
-  def empty?
-    @cards.empty?
-  end
-
 end#class
